@@ -1,0 +1,39 @@
+CC = gcc
+CFLAGS = -Wall -Wextra -g -pthread
+LDFLAGS = -lm
+
+# 银行系统目标
+BANK_SOURCES = account.c visualization.c bank_transaction.c
+BANK_OBJECTS = $(BANK_SOURCES:.c=.o)
+BANK_TARGET = bank_system
+
+# 进程调度系统目标
+SCHEDULER_SOURCES = process_control.c visualization.c scheduler.c
+SCHEDULER_OBJECTS = $(SCHEDULER_SOURCES:.c=.o)
+SCHEDULER_TARGET = process_scheduler
+
+all: $(BANK_TARGET) $(SCHEDULER_TARGET)
+
+$(BANK_TARGET): $(BANK_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(BANK_OBJECTS) $(LDFLAGS)
+
+$(SCHEDULER_TARGET): $(SCHEDULER_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(SCHEDULER_OBJECTS) $(LDFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(BANK_TARGET) $(SCHEDULER_TARGET) *.o
+
+run-bank: $(BANK_TARGET)
+	./$(BANK_TARGET)
+
+run-scheduler: $(SCHEDULER_TARGET)
+	./$(SCHEDULER_TARGET)
+
+debug-bank: $(BANK_TARGET)
+	gdb ./$(BANK_TARGET)
+
+debug-scheduler: $(SCHEDULER_TARGET)
+	gdb ./$(SCHEDULER_TARGET)
